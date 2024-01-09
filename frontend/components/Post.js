@@ -1,19 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Assuming you have Ionicons installed
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Post ({ post }) {
   return (
     <View style={styles.container}>
         <View style={styles.header}>
-        <Ionicons name="musical-notes" size={24} color="black" style={styles.musicIcon} />
+          <Ionicons name="musical-notes" size={24} color="black" style={styles.musicIcon} />
         <Text style={styles.userName}>{post.userName}</Text>
         </View>
         <Text style={styles.title}>{post.title}</Text>
         <Text style={styles.artist}>{post.artist}</Text>
         <Text style={styles.time}>{post.time.toLocaleString()}</Text>
         <TouchableOpacity style={styles.likeButton}>
-        <Ionicons name="heart-outline" size={24} color="red" />
+          <Ionicons name="heart-outline" size={24} color="red" />
         </TouchableOpacity>
     </View>
   );
