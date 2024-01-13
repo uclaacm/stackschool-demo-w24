@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Post from '../components/Post';
 import NewPost from '../components/NewPost';
@@ -9,7 +9,7 @@ const sampleData = [
   { id: '2', title: 'Song 2', artist: 'Artist 2', time: new Date('2024-01-08T09:30:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '69' },
 ];
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [isNewPostModalVisible, setIsNewPostModalVisible] = useState(false);
   const [songs, setSongs] = useState(sampleData);
 
@@ -22,7 +22,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.topBar}>
         <Ionicons
-          name="add-outline"
+          name="add"
           size={30}
           color="#fff"
           onPress={() => {
@@ -30,14 +30,17 @@ export default function HomeScreen() {
           }}
         />
         <Text style={styles.headerText}>SoundsRight.</Text>
-        <Ionicons
-          name="md-person-circle-outline"
-          size={30}
-          color="#fff"
-          onPress={() => {
-            // navigate to profile screen
-          }}
-        />
+        <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('Profile');
+        }}
+        >
+          <Ionicons
+            name="md-person-circle-outline"
+            size={30}
+            color="#fff"
+          />
+        </TouchableOpacity>
       </View>
       <FlatList
         data={songs.sort((a, b) => b.time - a.time)}

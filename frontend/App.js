@@ -1,5 +1,5 @@
 import { React, useEffect } from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
@@ -28,7 +28,7 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer >
+    <NavigationContainer>
       <StatusBar style="auto" />
       <Stack.Navigator
         initialRouteName="Home"

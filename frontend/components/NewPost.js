@@ -31,10 +31,11 @@ export default function NewPost({ visible, onClose, onPost }) {
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Post a new song</Text>
+          <Text style={styles.modalTitle}>Post Song</Text>
 
           <TextInput
             placeholder="Title"
+            placeholderTextColor="grey"
             value={title}
             onChangeText={(text) => setTitle(text)}
             style={styles.input}
@@ -42,17 +43,18 @@ export default function NewPost({ visible, onClose, onPost }) {
 
           <TextInput
             placeholder="Artist"
+            placeholderTextColor="grey"
             value={artist}
             onChangeText={(text) => setArtist(text)}
             style={styles.input}
           />
 
           <TouchableOpacity onPress={handlePost} style={styles.postButton}>
-            <Text style={styles.buttonText}>Post</Text>
+            <Text style={styles.postText}>Post</Text>
           </TouchableOpacity>
 
           <Pressable onPress={onClose} style={styles.cancelButton}>
-            <Text style={styles.buttonText}>Cancel</Text>
+            <Text style={styles.cancelText}>Cancel</Text>
           </Pressable>
         </View>
       </View>
@@ -74,29 +76,38 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   modalTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 24,
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 18,
+    marginBottom: 25,
   },
   input: {
-    fontSize: 16,
-    borderBottomWidth: 1,
-    marginBottom: 22,
+    fontFamily: 'Inter-SemiBold',
+    paddingBottom: 3,
+    borderBottomWidth: 2,
+    borderBottomColor: 'grey',
+    marginBottom: 25,
   },
   postButton: {
-    backgroundColor: '#333',
+    backgroundColor: 'black',
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     alignItems: 'center',
   },
   cancelButton: {
     marginTop: 10,
-    backgroundColor: '#e74c3c',
+    backgroundColor: 'white',
+    borderColor: 'black',
+    borderWidth: 1,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     alignItems: 'center',
   },
-  buttonText: {
+  postText: {
+    fontFamily: 'Inter-SemiBold',
     color: 'white',
+  },
+  cancelText: {
+    fontFamily: 'Inter-SemiBold',
+    color: 'black',
   },
 });
