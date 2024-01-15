@@ -1,26 +1,56 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet } from 'react-native';
 
+const URL = 'http://localhost:8000';
+
+const userId = 4;
+
 export default function NewPost({ visible, onClose, onPost }) {
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
 
-  function handlePost() {
+  async function handlePost() {
     if (!title || !artist) {
       alert('Please fill in all fields');
       return;
     }
 
     const newSong = {
-      id: String(Date.now()),
-      title,
       artist,
-      time: new Date(),
+      title,
+      user_id: userId,
     };
 
-    onPost(newSong);
-    onClose();
+    try {
+      const response = await fetch(`${URL}/songs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newSong),
+      });
+
+      if (!response.ok) {
+        console.error('Error creating new post:', response.statusText);
+        alert('Failed to create a new post. Please try again.');
+        return;
+      }
+
+      const createdSong = await response.json();
+      console.log('New Post:', createdSong);
+    } catch (error) {
+      console.error('Error creating new post:', error.message);
+      alert('Failed to create a new post. Please try again.');
+    } finally {
+      handleClose();
+    }
   };
+
+  function handleClose() {
+    setTitle('');
+    setArtist('');
+    onClose();
+  }
 
   return (
     <Modal
@@ -36,6 +66,7 @@ export default function NewPost({ visible, onClose, onPost }) {
           <TextInput
             placeholder="Title"
             placeholderTextColor="grey"
+            autoCapitalize='none'
             value={title}
             onChangeText={(text) => setTitle(text)}
             style={styles.input}
@@ -44,6 +75,7 @@ export default function NewPost({ visible, onClose, onPost }) {
           <TextInput
             placeholder="Artist"
             placeholderTextColor="grey"
+            autoCapitalize='none'
             value={artist}
             onChangeText={(text) => setArtist(text)}
             style={styles.input}
@@ -53,7 +85,7 @@ export default function NewPost({ visible, onClose, onPost }) {
             <Text style={styles.postText}>Post</Text>
           </TouchableOpacity>
 
-          <Pressable onPress={onClose} style={styles.cancelButton}>
+          <Pressable onPress={handleClose} style={styles.cancelButton}>
             <Text style={styles.cancelText}>Cancel</Text>
           </Pressable>
         </View>

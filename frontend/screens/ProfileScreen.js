@@ -1,19 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Post from '../components/Post';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+const URL = 'http://localhost:8000';
+
+const userId = 4;
+
 export default function ProfileScreen({ navigation }) {
-  const dummyUser = {
-    userName: 'JohnDoe',
-    firstName: 'John',
-    lastName: 'Doe',
-    posts: [
-      { id: '1', title: 'Song 1', artist: 'Artist 1', time: new Date('2024-01-08T10:00:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '42' },
-      { id: '2', title: 'Song 2', artist: 'Artist 2', time: new Date('2024-01-08T09:30:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '69' },
-    ],
+  // const dummyUser = {
+  //   userName: 'JohnDoe',
+  //   firstName: 'John',
+  //   lastName: 'Doe',
+  //   posts: [
+  //     { id: '1', title: 'Song 1', artist: 'Artist 1', time: new Date('2024-01-08T10:00:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '42' },
+  //     { id: '2', title: 'Song 2', artist: 'Artist 2', time: new Date('2024-01-08T09:30:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '69' },
+  //   ],
+  // };
+
+  const [user, setUser] = useState(null);
+  const [userSongs, setUserSongs] = useState([]);
+
+  useEffect(() => {
+    fetchUserData();
+    fetchUserSongs();
+  }, []);
+
+  async function fetchUserData() {
+    try {
+      const response = await fetch(`${URL}/users/${userId}`);
+      const data = await response.json();
+      setUser(data);
+    } catch (error) {
+      console.error('Error fetching user data:', error.message);
+    }
   };
+
+  async function fetchUserSongs() {
+    try {
+      const response = await fetch(`${URL}/users/songs/${userId}`);
+      const data = await response.json();
+      setUserSongs(data);
+    } catch (error) {
+      console.error('Error fetching user songs:', error.message);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -43,22 +75,27 @@ export default function ProfileScreen({ navigation }) {
           }}
         />
       </View>
-      <View style={styles.centered}>
-        <Image
-            style={styles.image}
-            source={require('../assets/profile.png')}/> 
-        <Text style={styles.name}> {dummyUser.firstName} {dummyUser.lastName} </Text>
-        <Text style={styles.username}>@{dummyUser.userName}</Text>
-      </View>
+      {user && (
+        <View style={styles.centered}>
+          <Image
+              style={styles.image}
+              // TO BE FIXED
+              source={require('../assets/profileShiyu.jpeg')}/>
+          <Text style={styles.name}>{user.first_name} {user.last_name}</Text>
+          <Text style={styles.username}>@{user.username}</Text>
+        </View>
+      )}
 
       <Text style={styles.sectionHeader}>Songs</Text>
-      <FlatList
-        data={dummyUser.posts}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Post post={item} />
-        )}
-      />
+      {userSongs && (
+        <FlatList
+          data={userSongs}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Post post={item} />
+          )}
+        />
+      )}
     </View>
   );
 }

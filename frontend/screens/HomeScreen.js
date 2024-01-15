@@ -1,21 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Post from '../components/Post';
 import NewPost from '../components/NewPost';
 
-const sampleData = [
-  { id: '1', title: 'Song 1', artist: 'Artist 1', time: new Date('2024-01-08T10:00:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '42' },
-  { id: '2', title: 'Song 2', artist: 'Artist 2', time: new Date('2024-01-08T09:30:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '69' },
-];
+const URL = 'http://localhost:8000';
+
+const userId = 4;
+
+// const sampleData = [
+//   { id: '1', title: 'Song 1', artist: 'Artist 1', time: new Date('2024-01-08T10:00:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '42' },
+//   { id: '2', title: 'Song 2', artist: 'Artist 2', time: new Date('2024-01-08T09:30:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '69' },
+// ];
 
 export default function HomeScreen({ navigation }) {
   const [isNewPostModalVisible, setIsNewPostModalVisible] = useState(false);
-  const [songs, setSongs] = useState(sampleData);
+  const [songs, setSongs] = useState([]);
 
-  function handlePost(newSong) {
-    // TO DO
-    console.log('New Post:', newSong);
+  useEffect(() => {
+    fetchSongs();
+  }, []);
+
+  useEffect(() => {
+    fetchSongs();
+  }, [songs]);
+
+  async function fetchSongs() {
+    try {
+      const response = await fetch(`${URL}/users/songs/${userId}`);
+      const data = await response.json();
+      setSongs(data);
+    } catch (error) {
+      console.error('Error fetching songs:', error.message);
+    }
+  };
+
+  async function handlePost(newSong) {
+    setSongs((prevSongs) => [newSong, ...prevSongs]);
   };
 
   return (
@@ -43,11 +64,9 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={songs.sort((a, b) => b.time - a.time)}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Post post={item} />
-        )}
+        data={songs.sort((a, b) => b.date - a.date)}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <Post post={item} />}
       />
       <NewPost
         visible={isNewPostModalVisible}

@@ -3,24 +3,21 @@ import { Image, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Post ({ post }) {
+  const timestamp = post.date;
+  const formattedTimestamp = new Date(timestamp).toLocaleString();
+
   return (
     <View style={styles.container}>
         <View style={styles.header}>
           <Image
             style={styles.image}
-            source={require('../assets/profile.png')}/>   
+            // TO BE FIXED
+            source={require('../assets/profileShiyu.jpeg')}/>   
           <View>
             <View style={styles.row}>
               <Text style={styles.whiteText}>{post.first_name} {post.last_name}</Text>
               <Text style={styles.greyText}>@{post.username}</Text>
-              <Text style={styles.greyText}>{post.time.toLocaleString('en-US', {
-                month: 'numeric',
-                day: 'numeric', 
-                year: '2-digit', 
-                hour: 'numeric',
-                minute: 'numeric', 
-                hour12: true, 
-              }).replace(/\//g, '.').replace(',', '')}</Text>
+              <Text style={styles.greyText}>{formattedTimestamp}</Text>
             </View>
             <View style={styles.songRow}>
               <Ionicons name="musical-note" size={12} color="white" style={styles.musicIcon} />
