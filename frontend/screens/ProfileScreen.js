@@ -81,7 +81,7 @@ export default function ProfileScreen({ navigation }) {
               style={styles.image}
               // TO BE FIXED
               source={require('../assets/profileShiyu.jpeg')}/>
-          <Text style={styles.name}>{user.first_name} {user.last_name}</Text>
+          <Text style={styles.name}>{user.first} {user.last}</Text>
           <Text style={styles.username}>@{user.username}</Text>
         </View>
       )}
@@ -89,7 +89,7 @@ export default function ProfileScreen({ navigation }) {
       <Text style={styles.sectionHeader}>Songs</Text>
       {userSongs && (
         <FlatList
-          data={userSongs}
+          data={userSongs.sort((a, b) => new Date(b.date) - new Date(a.date))}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <Post post={item} />

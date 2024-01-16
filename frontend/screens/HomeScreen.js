@@ -27,7 +27,7 @@ export default function HomeScreen({ navigation }) {
 
   async function fetchSongs() {
     try {
-      const response = await fetch(`${URL}/users/songs/${userId}`);
+      const response = await fetch(`${URL}/songs/all`);
       const data = await response.json();
       setSongs(data);
     } catch (error) {
@@ -64,7 +64,7 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={songs.sort((a, b) => b.date - a.date)}
+        data={songs.sort((a, b) => new Date(b.date) - new Date(a.date))}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <Post post={item} />}
       />

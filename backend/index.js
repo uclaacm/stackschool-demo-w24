@@ -77,23 +77,23 @@ app.post("/register", async(req, res) => {
     }    
 });
 
-// get user by username
-app.get('/users/:username', async (req, res) => {
-    const { username } = req.params;
-  
-    try {
-      const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-      
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'User not found.' });
-      }
-  
-      const user = result.rows[0];
-      res.json(user);
-    } catch (error) {
-      console.error('Error fetching user by username:', error.message);
-      res.status(500).json({ error: 'Internal Server Error' });
+// get user by id
+app.get('/users/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
     }
+
+    const user = result.rows[0];
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user by ID:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // delete a user
@@ -125,7 +125,7 @@ app.get('/users/songs/:userId', async (req, res) => {
 // SONGS
 
 // get all songs
-app.get("/songs", async(req, res) => {
+app.get("/songs/all", async(req, res) => {
     try {
         const allSongs = await pool.query("SELECT * FROM songs");
         res.json(allSongs.rows);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import SpotifyEmbed from './SpotifyEmbed';
 
 export default function Post ({ post }) {
   const timestamp = post.date;
@@ -25,7 +26,10 @@ export default function Post ({ post }) {
             </View>
           </View>
         </View>
-        <Text style={styles.embed}> [Potential Spotify Embed] </Text>
+        <SpotifyEmbed
+          title={post.title}
+          artist={post.artist}
+        />
         <View style={styles.likes}>
           <TouchableOpacity>
             <Ionicons name="heart-outline" size={16} color="grey" />
