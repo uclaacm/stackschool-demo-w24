@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet } from 'react-native';
 
 const URL = 'http://localhost:8000';
 
-const userId = 4;
-
 export default function NewPost({ visible, onClose, onPost }) {
+  const [userId, setUserId] = useState();
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const user = await getUser();
+
+      if (user) {
+        setUserId(user.user.id);
+      } else {
+        console.error('Error fetching user data');
+      }
+    };
+    fetchUserData();
+  }, []);
 
   async function handlePost() {
     if (!title || !artist) {

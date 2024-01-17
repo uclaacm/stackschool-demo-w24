@@ -6,13 +6,6 @@ import NewPost from '../components/NewPost';
 
 const URL = 'http://localhost:8000';
 
-const userId = 4;
-
-// const sampleData = [
-//   { id: '1', title: 'Song 1', artist: 'Artist 1', time: new Date('2024-01-08T10:00:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '42' },
-//   { id: '2', title: 'Song 2', artist: 'Artist 2', time: new Date('2024-01-08T09:30:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '69' },
-// ];
-
 export default function HomeScreen({ navigation }) {
   const [isNewPostModalVisible, setIsNewPostModalVisible] = useState(false);
   const [songs, setSongs] = useState([]);
@@ -63,11 +56,15 @@ export default function HomeScreen({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={songs.sort((a, b) => new Date(b.date) - new Date(a.date))}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <Post post={item} />}
-      />
+      {songs !== null && songs.length > 0 ? (
+        <FlatList
+          data={songs.sort((a, b) => new Date(b.date) - new Date(a.date))}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <Post post={item} />}
+        />
+      ) : (
+        <Text>No songs available.</Text>
+      )}
       <NewPost
         visible={isNewPostModalVisible}
         onClose={() => setIsNewPostModalVisible(false)}

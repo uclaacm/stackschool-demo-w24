@@ -93,7 +93,7 @@ export default function RegisterScreen({ navigation }) {
                     placeholder="First Name"
                     placeholderTextColor="grey"
                     autoCapitalize='none'
-                    autoCompleteType="first"
+                    autoCompleteType="given-name"
                     value={first}
                     onChangeText={(text) => setFirst(text)}
                     style={styles.input}
@@ -102,7 +102,7 @@ export default function RegisterScreen({ navigation }) {
                     placeholder="Last Name"
                     placeholderTextColor="grey"
                     autoCapitalize='none'
-                    autoCompleteType="last"
+                    autoCompleteType="family-name"
                     value={last}
                     onChangeText={(text) => setLast(text)}
                     style={styles.input}
@@ -111,6 +111,7 @@ export default function RegisterScreen({ navigation }) {
                     placeholder="Password"
                     placeholderTextColor="grey"
                     autoCapitalize='none'
+                    autoCompleteType="new-password"
                     secureTextEntry={true}
                     value={password}
                     onChangeText={(text) => setPassword(text)}

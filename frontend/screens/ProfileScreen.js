@@ -3,39 +3,30 @@ import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Post from '../components/Post';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { getUser, clearUser } from '../utils';
 
 const URL = 'http://localhost:8000';
 
-const userId = 4;
-
 export default function ProfileScreen({ navigation }) {
-  // const dummyUser = {
-  //   userName: 'JohnDoe',
-  //   firstName: 'John',
-  //   lastName: 'Doe',
-  //   posts: [
-  //     { id: '1', title: 'Song 1', artist: 'Artist 1', time: new Date('2024-01-08T10:00:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '42' },
-  //     { id: '2', title: 'Song 2', artist: 'Artist 2', time: new Date('2024-01-08T09:30:00'), username: 'JohnDoe', first_name: 'John', last_name: 'Doe', likes: '69' },
-  //   ],
-  // };
-
   const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState();
   const [userSongs, setUserSongs] = useState([]);
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      const user = await getUser();
+
+      if (user) {
+        setUser(user);
+        setUserId(user.user.id);
+      } else {
+        console.error('Error fetching user data');
+      }
+    };
+
     fetchUserData();
     fetchUserSongs();
   }, []);
-
-  async function fetchUserData() {
-    try {
-      const response = await fetch(`${URL}/users/${userId}`);
-      const data = await response.json();
-      setUser(data);
-    } catch (error) {
-      console.error('Error fetching user data:', error.message);
-    }
-  };
 
   async function fetchUserSongs() {
     try {
@@ -65,13 +56,14 @@ export default function ProfileScreen({ navigation }) {
           />
         </TouchableOpacity>
         <Text style={styles.sectionHeader}>Profile</Text>
-        {/* TODO: Change this to three dot icon */}
         <Ionicons
-          name="arrow-forward"
+          name="ellipsis-horizontal-outline"
           size={24}
-          color="#000"
+          color="#fff"
           onPress={() => {
-            setIsNewPostModalVisible(true);
+            // TODO: Open menu to either logout or delete account
+            clearUser();
+            navigation.navigate('Login');
           }}
         />
       </View>
@@ -81,13 +73,13 @@ export default function ProfileScreen({ navigation }) {
               style={styles.image}
               // TO BE FIXED
               source={require('../assets/profileShiyu.jpeg')}/>
-          <Text style={styles.name}>{user.first} {user.last}</Text>
-          <Text style={styles.username}>@{user.username}</Text>
+          <Text style={styles.name}>{user.user.first} {user.user.last}</Text>
+          <Text style={styles.username}>@{user.user.username}</Text>
         </View>
       )}
 
       <Text style={styles.sectionHeader}>Songs</Text>
-      {userSongs && (
+      {userSongs !== null && userSongs.length > 0 ? (
         <FlatList
           data={userSongs.sort((a, b) => new Date(b.date) - new Date(a.date))}
           keyExtractor={(item) => item.id}
@@ -95,6 +87,8 @@ export default function ProfileScreen({ navigation }) {
             <Post post={item} />
           )}
         />
+      ) : (
+        <Text style={styles.noSongs}>No songs available.</Text>
       )}
     </View>
   );
@@ -145,4 +139,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
+  noSongs: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 16,
+    textAlign: 'center',
+    color: 'white',
+    marginTop: 150,
+  }
 });

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { storeUser } from '../utils';
 
 const URL = 'http://localhost:8000';
 
@@ -21,11 +22,15 @@ export default function LoginScreen({ navigation }) {
                 },
                 body: JSON.stringify({ username, password }),
             });
+
+            const data = await response.json();
+
             if (!response.ok) {
-                const data = await response.json();
                 console.error('Error authenticating:', data.error);
                 alert(`${data.error}`);
             } else {
+                await storeUser(data);
+                // console.log(data);
                 navigation.navigate('Home');
             }
         } catch (error) {

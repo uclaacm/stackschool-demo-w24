@@ -1,4 +1,4 @@
-import { React, useEffect } from 'react';
+import { React, useState, useEffect } from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,13 +8,29 @@ import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
+import { getUser } from './utils';
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [initialRoute, setInitialRoute] = useState('');
   const [fontsLoaded] = useFonts({
     'Inter-SemiBold': require('./assets/fonts/Inter-SemiBold.ttf')
   });
+
+  useEffect(() => {
+    const checkUserSession = async () => {
+      const user = await getUser();
+
+      if (user) {
+        setInitialRoute("Home");
+      } else {
+        setInitialRoute("Login");
+      }
+    };
+
+    checkUserSession();
+  }, []);
 
   useEffect(() => {
     async function prepare() {
@@ -33,7 +49,7 @@ export default function App() {
     <NavigationContainer>
       <StatusBar style="auto" />
       <Stack.Navigator
-        initialRouteName="Login"
+        initialRouteName={initialRoute}
         screenOptions={{
           headerShown: false,
         }}
