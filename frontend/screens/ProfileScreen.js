@@ -25,8 +25,11 @@ export default function ProfileScreen({ navigation }) {
     };
 
     fetchUserData();
-    fetchUserSongs();
   }, []);
+
+  useEffect(() => {
+    fetchUserSongs();
+  }, [userId]);
 
   async function fetchUserSongs() {
     try {
