@@ -13,23 +13,28 @@ export default function ProfileScreen({ navigation }) {
   const [userSongs, setUserSongs] = useState([]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const user = await getUser();
+    fetchUserData();
+  }, []);
 
+  useEffect(() => {
+    if (userId) {
+      fetchUserSongs();
+    }
+  }, [userId]);
+
+  async function fetchUserData() {
+    try {
+      const user = await getUser();
       if (user) {
         setUser(user);
         setUserId(user.user.id);
       } else {
         console.error('Error fetching user data');
       }
-    };
-
-    fetchUserData();
-  }, []);
-
-  useEffect(() => {
-    fetchUserSongs();
-  }, [userId]);
+    } catch (error) {
+      console.error('Error fetching user data:', error.message);
+    }    
+  }
 
   async function fetchUserSongs() {
     try {
