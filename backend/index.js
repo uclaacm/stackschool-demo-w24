@@ -101,7 +101,7 @@ app.get('/users/:userId', async (req, res) => {
 app.delete("/users/delete/:userId", async(req, res) => {
     try {
         const { userId } = req.params;
-        const deleteUser = await pool.query("DELETE FROM users WHERE user_id = $1", [userId]);
+        const deleteUser = await pool.query("DELETE FROM users WHERE id = $1", [userId]);
         res.json("User was successfully deleted.");
     } catch (err) {
         console.error(err.message);

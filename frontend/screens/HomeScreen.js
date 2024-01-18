@@ -83,6 +83,7 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#000',
+    height: '100%',
     paddingTop: 75,
   },
   topBar: {

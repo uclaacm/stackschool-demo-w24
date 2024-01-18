@@ -14,23 +14,23 @@ export default function ProfileScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const user = await getUser();
-
-      if (user) {
-        setUser(user);
-        setUserId(user.id);
-      } else {
-        console.error('Error fetching user data');
-      }
-    };
-
     fetchUserData();
   }, []);
 
   useEffect(() => {
     fetchUserSongs();
   }, [userId]);
+
+  async function fetchUserData() {
+    const user = await getUser();
+
+    if (user) {
+      setUser(user);
+      setUserId(user.id);
+    } else {
+      console.error('Error fetching user data');
+    }
+  }
 
   async function fetchUserSongs() {
     try {
