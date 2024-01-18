@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { storeUser } from '../utils';
 
@@ -7,6 +8,13 @@ const URL = 'http://localhost:8000';
 export default function LoginScreen({ navigation }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    useFocusEffect(
+        useCallback(() => {
+          setUsername('');
+          setPassword('');
+        }, [])
+    );
 
     async function handleSignIn() {
         if (!username || !password) {

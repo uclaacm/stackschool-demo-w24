@@ -72,37 +72,37 @@ export default function NewPost({ visible, onClose, onPost }) {
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Post Song</Text>
+    <View style={styles.modalContainer}>
+      <View style={styles.modalContent}>
+        <Text style={styles.modalTitle}>Post Song</Text>
 
-          <TextInput
-            placeholder="Title"
-            placeholderTextColor="grey"
-            autoCapitalize='none'
-            value={title}
-            onChangeText={(text) => setTitle(text)}
-            style={styles.input}
-          />
+        <TextInput
+          placeholder="Title"
+          placeholderTextColor="grey"
+          autoCapitalize='none'
+          value={title}
+          onChangeText={(text) => setTitle(text)}
+          style={styles.input}
+        />
 
-          <TextInput
-            placeholder="Artist"
-            placeholderTextColor="grey"
-            autoCapitalize='none'
-            value={artist}
-            onChangeText={(text) => setArtist(text)}
-            style={styles.input}
-          />
+        <TextInput
+          placeholder="Artist"
+          placeholderTextColor="grey"
+          autoCapitalize='none'
+          value={artist}
+          onChangeText={(text) => setArtist(text)}
+          style={styles.input}
+        />
 
-          <TouchableOpacity onPress={handlePost} style={styles.postButton}>
-            <Text style={styles.postText}>Post</Text>
-          </TouchableOpacity>
+        <TouchableOpacity onPress={handlePost} style={styles.postButton}>
+          <Text style={styles.postText}>Post</Text>
+        </TouchableOpacity>
 
-          <Pressable onPress={handleClose} style={styles.cancelButton}>
-            <Text style={styles.cancelText}>Cancel</Text>
-          </Pressable>
-        </View>
+        <Pressable onPress={handleClose} style={styles.cancelButton}>
+          <Text style={styles.cancelText}>Cancel</Text>
+        </Pressable>
       </View>
+    </View>
     </Modal>
   );
 };

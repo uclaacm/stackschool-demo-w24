@@ -5,9 +5,11 @@ import SpotifyEmbed from './SpotifyEmbed';
 
 const URL = 'http://localhost:8000';
 
-export default function Post ({ post }) {
+export default function Post ({ user, post }) {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState();
+  const [songUser, setSongUser] = useState();
+  const [likes, setLikes] = useState(post.likes);
+  const [liked, setLiked] = useState();
   const timestamp = post.date;
   const formattedTimestamp = new Date(timestamp).toLocaleString('en-US', {
     month: 'numeric',
@@ -18,18 +20,57 @@ export default function Post ({ post }) {
     hour12: true, 
   }).replace(/\//g, '.').replace(',', '');
 
+  async function setLike() {
+    try {
+      const response = await fetch(`${URL}/liked/song?songId=${post.id}&userId=${user.id}`);
+      const data = await response.json();
+      setLiked(data.has_liked);
+    } catch (error) {
+      console.error('Error setting like:', error.message);
+    } 
+  }
+
+  async function handleLike() {
+    try {
+      const response = await fetch(`${URL}/songs/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ songId: post.id, userId: user.id }),
+      });
+
+        const updatedPost = await response.json();
+        setLikes(updatedPost.likes);
+        setLiked(!liked);
+    } catch (error) {
+      console.error('Error updating like:', error.message);
+    }    
+  }
+
   useEffect(() => {
-    fetchUserData();
+    fetchSongUser();
   }, []);
 
-  async function fetchUserData() {
+  useEffect(() => {
+    if(user)
+    {
+      setLike();
+    }
+  }, [user])
+
+  useEffect(() => {
+    setLikes(post.likes);
+  }, [post.likes]);
+
+  async function fetchSongUser() {
     try {
       const response = await fetch(`${URL}/songs/user/${post.id}`);
       const data = await response.json();
-      setUser(data);
+      setSongUser(data);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching user data:', error.message);
+      console.error(`Error fetching song's user data:`, error.message);
     }    
   }
 
@@ -47,8 +88,8 @@ export default function Post ({ post }) {
             source={require('../assets/profileShiyu.jpeg')}/>   
           <View>
             <View style={styles.row}>
-              <Text style={styles.whiteText}>{user.first} {user.last}</Text>
-              <Text style={styles.greyText}>@{user.username}</Text>
+              <Text style={styles.whiteText}>{songUser.first} {songUser.last}</Text>
+              <Text style={styles.greyText}>@{songUser.username}</Text>
               <Text style={styles.greyText}>{formattedTimestamp}</Text>
             </View>
             <View style={styles.songRow}>
@@ -64,10 +105,10 @@ export default function Post ({ post }) {
           />
         )}
         <View style={styles.likes}>
-          <TouchableOpacity>
-            <Ionicons name="heart-outline" size={16} color="grey" />
+          <TouchableOpacity onPress={handleLike}>
+            <Ionicons name={liked ? 'heart' : 'heart-outline'} size={16} color={liked ? 'red' : 'grey'} />
           </TouchableOpacity>
-          <Text style={styles.likesText}>{post.likes} likes</Text>
+          <Text style={styles.likesText}>{likes} likes</Text>
         </View>
     </View>
   );
@@ -111,8 +152,8 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   image: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     borderRadius: 100,
   },
   likes: {
@@ -124,7 +165,7 @@ const styles = StyleSheet.create({
   },
   likesText: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: 'bold',
     color: 'white'
   },

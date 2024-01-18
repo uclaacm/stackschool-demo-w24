@@ -26,6 +26,5 @@ CREATE TABLE songs (
 CREATE TABLE song_likes (
     id SERIAL PRIMARY KEY,
     song_id INTEGER REFERENCES songs(id),
-    user_id INTEGER REFERENCES users(id),
-    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    user_id INTEGER REFERENCES users(id)
 );

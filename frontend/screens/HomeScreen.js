@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Post from '../components/Post';
 import NewPost from '../components/NewPost';
+import { getUser } from '../utils';
 
 const URL = 'http://localhost:8000';
 
 export default function HomeScreen({ navigation }) {
   const [isNewPostModalVisible, setIsNewPostModalVisible] = useState(false);
+  const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
   const [songs, setSongs] = useState([]);
 
@@ -18,6 +21,22 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     fetchSongs();
   }, [songs]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUserData = async () => {
+        const user = await getUser();
+
+        if(user) {
+          setUser(user);
+        } else {
+          console.error('Error fetching user data');
+        }
+      };
+
+      fetchUserData();
+    }, [])
+  );
 
   async function fetchSongs() {
     try {
@@ -65,7 +84,7 @@ export default function HomeScreen({ navigation }) {
         <FlatList
           data={songs.sort((a, b) => new Date(b.date) - new Date(a.date))}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <Post post={item} />}
+          renderItem={({ item }) => <Post post={item} user={user} />}
           style={{ marginTop: 15, marginBottom: 50}}
         />      
       ) : (
