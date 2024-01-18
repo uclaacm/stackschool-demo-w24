@@ -11,30 +11,26 @@ export default function ProfileScreen({ navigation }) {
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState();
   const [userSongs, setUserSongs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      const user = await getUser();
+
+      if (user) {
+        setUser(user);
+        setUserId(user.id);
+      } else {
+        console.error('Error fetching user data');
+      }
+    };
+
     fetchUserData();
   }, []);
 
   useEffect(() => {
-    if (userId) {
-      fetchUserSongs();
-    }
+    fetchUserSongs();
   }, [userId]);
-
-  async function fetchUserData() {
-    try {
-      const user = await getUser();
-      if (user) {
-        setUser(user);
-        setUserId(user.user.id);
-      } else {
-        console.error('Error fetching user data');
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error.message);
-    }    
-  }
 
   async function fetchUserSongs() {
     try {
@@ -43,6 +39,8 @@ export default function ProfileScreen({ navigation }) {
       setUserSongs(data);
     } catch (error) {
       console.error('Error fetching user songs:', error.message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -81,19 +79,22 @@ export default function ProfileScreen({ navigation }) {
               style={styles.image}
               // TO BE FIXED
               source={require('../assets/profileShiyu.jpeg')}/>
-          <Text style={styles.name}>{user.user.first} {user.user.last}</Text>
-          <Text style={styles.username}>@{user.user.username}</Text>
+          <Text style={styles.name}>{user.first} {user.last}</Text>
+          <Text style={styles.username}>@{user.username}</Text>
         </View>
       )}
 
-      <Text style={styles.sectionHeader}>Songs</Text>
-      {userSongs !== null && userSongs.length > 0 ? (
+      <Text style={styles.songHeader}>Songs</Text>
+      {loading ? (
+        <Text style={styles.noSongs}>Loading...</Text>
+      ) : userSongs.length > 0 ? (
         <FlatList
           data={userSongs.sort((a, b) => new Date(b.date) - new Date(a.date))}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <Post post={item} />
           )}
+          style={{ marginTop: 15, marginBottom: 50}}
         />
       ) : (
         <Text style={styles.noSongs}>No songs available.</Text>
@@ -107,8 +108,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
     paddingTop: 75,
-    paddingLeft: 20,
-    paddingRight: 20,
     paddingBottom: 50,
   },
   topBar: {
@@ -116,10 +115,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 175,
+    height: 175,
     borderRadius: 100,
     marginBottom: 20,
   },
@@ -146,6 +147,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-SemiBold',
     fontSize: 18,
     color: 'white',
+  },
+  songHeader: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 18,
+    color: 'white',
+    paddingLeft: 20,
   },
   noSongs: {
     fontFamily: 'Inter-SemiBold',

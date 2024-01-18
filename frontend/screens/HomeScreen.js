@@ -8,6 +8,7 @@ const URL = 'http://localhost:8000';
 
 export default function HomeScreen({ navigation }) {
   const [isNewPostModalVisible, setIsNewPostModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [songs, setSongs] = useState([]);
 
   useEffect(() => {
@@ -25,6 +26,8 @@ export default function HomeScreen({ navigation }) {
       setSongs(data);
     } catch (error) {
       console.error('Error fetching songs:', error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,14 +59,17 @@ export default function HomeScreen({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-      {songs !== null && songs.length > 0 ? (
+      {loading ? (
+        <Text>Loading...</Text>
+      ) : songs !== null && songs.length > 0 ? (
         <FlatList
           data={songs.sort((a, b) => new Date(b.date) - new Date(a.date))}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <Post post={item} />}
-        />
+          style={{ marginTop: 15, marginBottom: 50}}
+        />      
       ) : (
-        <Text>No songs available.</Text>
+        <Text style={styles.noSongs}>No songs available.</Text>
       )}
       <NewPost
         visible={isNewPostModalVisible}
@@ -76,17 +82,15 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#000',
     paddingTop: 75,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 50,
   },
   topBar: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   headerText: {
     fontFamily: 'Inter-SemiBold',
@@ -95,4 +99,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#fff',
   },
+  noSongs: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 16,
+    textAlign: 'center',
+    color: 'white',
+    marginTop: 150,
+  }
 });

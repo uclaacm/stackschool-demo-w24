@@ -14,7 +14,7 @@ export default function NewPost({ visible, onClose, onPost }) {
       const user = await getUser();
 
       if (user) {
-        setUserId(user.user.id);
+        setUserId(user.id);
       } else {
         console.error('Error fetching user data');
       }

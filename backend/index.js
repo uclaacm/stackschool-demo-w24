@@ -34,7 +34,7 @@ app.post('/login', async (req, res) => {
   
         if (result) {
           const { password, ...userWithoutPassword } = user;
-          res.json({ user: userWithoutPassword });
+          res.json(userWithoutPassword);
         } else {
           res.status(401).json({ error: 'Incorrect password.' });
         }
@@ -144,6 +144,30 @@ app.get("/songs/:id", async(req, res) => {
     } catch (err) {
         console.error(err.message);
     }
+});
+
+// get a song's user
+app.get("/songs/user/:songId", async (req, res) => {
+  const { songId } = req.params;
+  try {
+    const song = await pool.query("SELECT * FROM songs WHERE id = $1", [songId]);
+
+    if (song.rows.length === 0) {
+      return res.status(404).json({ error: 'Song not found' });
+    }
+
+    const user = await pool.query("SELECT * FROM users WHERE id = $1", [song.rows[0].user_id]);
+
+    if (user.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const { password, ...userWithoutPassword } = user.rows[0];
+    res.json(userWithoutPassword);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // create a song
