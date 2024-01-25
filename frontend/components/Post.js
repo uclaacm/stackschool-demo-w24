@@ -11,6 +11,7 @@ export default function Post ({ user, post, accessToken }) {
   const [image, setImage] = useState();
   const [likes, setLikes] = useState(post.likes);
   const [liked, setLiked] = useState();
+  const [showEmbed, setShowEmbed] = useState(true);
   const timestamp = post.date;
   const formattedTimestamp = new Date(timestamp).toLocaleString('en-US', {
     month: 'numeric',
@@ -20,6 +21,12 @@ export default function Post ({ user, post, accessToken }) {
     minute: 'numeric', 
     hour12: true, 
   }).replace(/\//g, '.').replace(',', '');
+
+  const handleEmbed = (works) => {
+    if (!works) {
+      setShowEmbed(false);
+    }
+  };
 
   async function setLike() {
     try {
@@ -105,12 +112,12 @@ export default function Post ({ user, post, accessToken }) {
             </View>
           </View>
         </View>
-        {!loading && (
+        {!loading && showEmbed && (
           <SpotifyEmbed
             title={post.title}
             artist={post.artist}
             accessToken={accessToken}
-
+            onResult={handleEmbed}
           />
         )}
         <View style={styles.likes}>

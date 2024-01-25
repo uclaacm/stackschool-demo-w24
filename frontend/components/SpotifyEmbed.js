@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 
 // Run npx expo install react-native-webview
 import { WebView } from 'react-native-webview';
@@ -15,8 +15,9 @@ import * as Linking from 'expo-linking';
  * https://developer.spotify.com/documentation/embeds/tutorials/using-the-iframe-api
  */
 
-export default function SpotifyEmbed({ title, artist, accessToken }) {
+export default function SpotifyEmbed({ title, artist, accessToken, onResult }) {
   const [injectedJavaScript, setInjectedJavaScript] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const searchQuery = `https://api.spotify.com/v1/search?q=${encodeURIComponent(`${title} artist:${artist}`)}&type=track&limit=1`;
@@ -45,8 +46,10 @@ export default function SpotifyEmbed({ title, artist, accessToken }) {
                 };
             `;
             setInjectedJavaScript(newInjectedJavaScript);
+            onResult(true);
           } else {
-            console.error('No URI found in the fetched data.');
+            console.log(`No URI found in the fetched data for ${title} - ${artist}.`);
+            onResult(false);
           }
         });
     } catch (error) {
@@ -57,18 +60,18 @@ export default function SpotifyEmbed({ title, artist, accessToken }) {
   // Can replace <body> with <body style="background-color:black;"> to make webview background blend with app background
   const htmlContent = `
     <html lang="en">
-        <head>
-            <meta name="viewport" content="initial-scale=1" />
-        </head>
-        <body style="margin: 0; background-color: black;">
-            <div id="embed-iframe"></div>
-            <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
-            <script type="text/javascript">
-                ${injectedJavaScript}
-            </script>
-        </body>
+      <head>
+        <meta name="viewport" content="initial-scale=1" />
+      </head>
+      <body style="margin: 0; background-color: black;">
+        <div id="embed-iframe"></div>
+        <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+        <script type="text/javascript">
+          ${injectedJavaScript}
+        </script>
+      </body>
     </html>
-    `;
+  `;
 
   /**
    * Determines whether the WebView should start loading a request based on the URL.
@@ -76,11 +79,11 @@ export default function SpotifyEmbed({ title, artist, accessToken }) {
    * Otherwise, it returns true to allow the WebView to continue loading the request.
    */
   function shouldStartLoadWithRequest(event) {
-      if (event.url.includes("spotify.app.link")) {
-          Linking.openURL(event.url);
-          return false;
-      }
-      return true;
+    if (event.url.includes("spotify.app.link")) {
+      Linking.openURL(event.url);
+      return false;
+    }
+    return true;
   };
 
   return (
@@ -90,17 +93,25 @@ export default function SpotifyEmbed({ title, artist, accessToken }) {
         originWhitelist={['*']}
         mixedContentMode="compatibility"
         injectedJavaScript={injectedJavaScript}
-        source={{
-          html: htmlContent,
-        }}
+        source={{ html: htmlContent }}
         startInLoadingState={true}
         scalesPageToFit={true}
-        style={{
-          width: `100%`,
-        }}
+        style={{ width: `100%` }}
         onShouldStartLoadWithRequest={shouldStartLoadWithRequest}
         scrollEnabled='false'
+        onLoadProgress={({nativeEvent}) => {
+          if (nativeEvent.progress === 1) {
+            setTimeout(() => {
+              setLoading(false);
+            }, 1500); 
+          } 
+        }}
       />
+      {loading && (
+        <View style={{ height: 95, backgroundColor: 'black'}}>
+          <ActivityIndicator color="grey" style={{display: 'flex', alignItems: 'center', height: '100%'}} />
+        </View>
+      )}
     </View>
   );
 };
