@@ -3,7 +3,7 @@ import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Post from '../components/Post';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { getUser, clearUser } from '../utils';
+import { getUser, clearUser, getAccessToken } from '../utils';
 
 const URL = 'http://localhost:8000';
 
@@ -12,9 +12,11 @@ export default function ProfileScreen({ navigation }) {
   const [userId, setUserId] = useState();
   const [userSongs, setUserSongs] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [accessToken, setAccessToken] = useState();
+  
   useEffect(() => {
     fetchUserData();
+    fetchAccessToken();
   }, []);
 
   useEffect(() => {
@@ -34,6 +36,10 @@ export default function ProfileScreen({ navigation }) {
 
   async function fetchUserSongs() {
     try {
+      if (!userId) {
+        return;
+      }
+
       const response = await fetch(`${URL}/users/songs/${userId}`);
       const data = await response.json();
       setUserSongs(data);
@@ -41,6 +47,15 @@ export default function ProfileScreen({ navigation }) {
       console.error('Error fetching user songs:', error.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchAccessToken() {
+    try {
+      const token = await getAccessToken();
+      setAccessToken(token);
+    } catch (error) {
+      console.error('Error fetching access token:', error.message);
     }
   }
 
@@ -92,7 +107,7 @@ export default function ProfileScreen({ navigation }) {
           data={userSongs.sort((a, b) => new Date(b.date) - new Date(a.date))}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Post post={item} />
+            <Post post={item} user={user} accessToken={accessToken}/>
           )}
           style={{ marginTop: 15, marginBottom: 50}}
         />

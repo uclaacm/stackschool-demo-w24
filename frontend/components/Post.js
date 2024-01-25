@@ -5,7 +5,7 @@ import SpotifyEmbed from './SpotifyEmbed';
 
 const URL = 'http://localhost:8000';
 
-export default function Post ({ user, post }) {
+export default function Post ({ user, post, accessToken }) {
   const [loading, setLoading] = useState(true);
   const [songUser, setSongUser] = useState();
   const [likes, setLikes] = useState(post.likes);
@@ -102,6 +102,8 @@ export default function Post ({ user, post }) {
           <SpotifyEmbed
             title={post.title}
             artist={post.artist}
+            accessToken={accessToken}
+
           />
         )}
         <View style={styles.likes}>

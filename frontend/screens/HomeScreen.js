@@ -4,7 +4,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import { Ionicons } from '@expo/vector-icons';
 import Post from '../components/Post';
 import NewPost from '../components/NewPost';
-import { getUser } from '../utils';
+import { getUser, getAccessToken } from '../utils';
 
 const URL = 'http://localhost:8000';
 
@@ -13,14 +13,17 @@ export default function HomeScreen({ navigation }) {
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
   const [songs, setSongs] = useState([]);
+  const [accessToken, setAccessToken] = useState();
 
   useEffect(() => {
-    fetchSongs();
+    Promise.all([fetchSongs(), fetchAccessToken()])
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error in promise:', error.message);
+      });
   }, []);
-
-  useEffect(() => {
-    fetchSongs();
-  }, [songs]);
 
   useFocusEffect(
     useCallback(() => {
@@ -45,10 +48,17 @@ export default function HomeScreen({ navigation }) {
       setSongs(data);
     } catch (error) {
       console.error('Error fetching songs:', error.message);
-    } finally {
-      setLoading(false);
     }
   };
+
+  async function fetchAccessToken() {
+    try {
+      const token = await getAccessToken();
+      setAccessToken(token);
+    } catch (error) {
+      console.error('Error fetching access token:', error.message);
+    }
+  }
 
   async function handlePost(newSong) {
     setSongs((prevSongs) => [newSong, ...prevSongs]);
@@ -84,7 +94,7 @@ export default function HomeScreen({ navigation }) {
         <FlatList
           data={songs.sort((a, b) => new Date(b.date) - new Date(a.date))}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <Post post={item} user={user} />}
+          renderItem={({ item }) => <Post post={item} user={user} accessToken={accessToken}/>}
           style={{ marginTop: 15, marginBottom: 50}}
         />      
       ) : (
@@ -94,7 +104,7 @@ export default function HomeScreen({ navigation }) {
         visible={isNewPostModalVisible}
         onClose={() => setIsNewPostModalVisible(false)}
         onPost={handlePost}
-      /> 
+      />
     </View>
   );
 };
