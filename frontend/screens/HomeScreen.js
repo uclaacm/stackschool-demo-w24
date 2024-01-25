@@ -28,12 +28,19 @@ export default function HomeScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       const fetchUserData = async () => {
-        const user = await getUser();
+        const userId = await getUser();
 
-        if(user) {
-          setUser(user);
-        } else {
-          console.error('Error fetching user data');
+        try {
+          const response = await fetch(`${URL}/users/${userId}`);
+          const data = await response.json();
+          if(data) {
+            setUser(data);
+          } else {
+            console.error('Error fetching user data');
+          }
+        } catch (error) {
+          console.error('Error getting user by ID:', error.message);
+          return null;
         }
       };
 
@@ -98,7 +105,9 @@ export default function HomeScreen({ navigation }) {
           style={{ marginTop: 15, marginBottom: 50}}
         />      
       ) : (
-        <Text style={styles.noSongs}>No songs available.</Text>
+        <View style={styles.noSongs}>
+          <Text style={styles.noSongsText}>No songs available.</Text>
+        </View>
       )}
       <NewPost
         visible={isNewPostModalVisible}
@@ -130,10 +139,13 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   noSongs: {
+    height: '80%',
+    justifyContent: 'center',
+  },
+  noSongsText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 16,
     textAlign: 'center',
     color: 'white',
-    marginTop: 150,
   }
 });

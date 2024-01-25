@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 
 const URL = 'http://localhost:8000';
@@ -9,7 +9,13 @@ export default function RegisterScreen({ navigation }) {
     const [first, setFirst] = useState('');
     const [last, setLast] = useState('');
     const [password, setPassword] = useState('');
+    const [image, setImage] = useState('');
     const [confirm, setConfirm] = useState('');
+
+    useEffect(() => {
+        const random = Math.floor(Math.random() * 4) + 1;
+        setImage(`mofu${random}.jpeg`);
+    }, []);
 
     const isEmailValid = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,8 +30,8 @@ export default function RegisterScreen({ navigation }) {
 
     async function handleSignUp() {
         if (!email || !username || !first || !last || !password || !confirm) {
-          alert('Please fill in all fields.');
-          return;
+            alert('Please fill in all fields.');
+            return;
         }
 
         if (!isEmailValid(email)) {
@@ -50,7 +56,7 @@ export default function RegisterScreen({ navigation }) {
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, username, first, last, password }),
+                body: JSON.stringify({ email, username, first, last, password, image }),
             });
             if (!response.ok) {
                 const data = await response.json();
@@ -111,7 +117,7 @@ export default function RegisterScreen({ navigation }) {
                     placeholder="Password"
                     placeholderTextColor="grey"
                     autoCapitalize='none'
-                    autoCompleteType="new-password"
+                    // autoCompleteType="new-password"
                     secureTextEntry={true}
                     value={password}
                     onChangeText={(text) => setPassword(text)}

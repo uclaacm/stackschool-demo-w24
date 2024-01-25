@@ -33,8 +33,8 @@ app.post('/login', async (req, res) => {
       }
 
       if (result) {
-        const { password, ...userWithoutPassword } = user;
-        res.json(userWithoutPassword);
+        const { id } = user;
+        res.json(id);
       } else {
         res.status(401).json({ error: 'Incorrect password.' });
       }
@@ -120,6 +120,20 @@ app.get('/users/songs/:userId', async (req, res) => {
   } catch (error) {
     console.error('Error fetching user posts:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// edit a user's profile picture
+app.put('/users/edit/picture', async (req, res) => {
+  const { userId, image } = req.body;
+
+  try {
+    const result = await pool.query('UPDATE users SET image = $1 WHERE id = $2 RETURNING id, email, image', [image, userId]);
+    const updatedUserData = result.rows[0];
+    res.json({ message: 'Profile picture updated successfully', user: updatedUserData });
+  } catch (error) {
+    console.error('Error updating profile picture:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -209,7 +223,6 @@ app.get('/liked/song', async (req, res) => {
 
   try {
     const checkLikes = await pool.query("SELECT COUNT(*) > 0 AS has_liked FROM song_likes WHERE song_id = $1 AND user_id = $2", [songId, userId]);
-    // const hasLiked = checkLikes.rows[0].has_liked;
     res.json(checkLikes.rows[0]);
   } catch (err) {
     console.error('Error checking like:', err.message);

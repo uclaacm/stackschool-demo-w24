@@ -3273,6 +3273,18 @@
   dependencies:
     "fontfaceobserver" "^2.1.0"
 
+"expo-image-loader@~4.6.0":
+  "integrity" "sha512-RHQTDak7/KyhWUxikn2yNzXL7i2cs16cMp6gEAgkHOjVhoCJQoOJ0Ljrt4cKQ3IowxgCuOrAgSUzGkqs7omj8Q=="
+  "resolved" "https://registry.npmjs.org/expo-image-loader/-/expo-image-loader-4.6.0.tgz"
+  "version" "4.6.0"
+
+"expo-image-picker@^14.7.1":
+  "integrity" "sha512-ILQVOJgI3aEzrDmCFGDPtpAepYkn8mot8G7vfQ51BfFdQbzL6N3Wm1fS/ofdWlAZJl/qT2DwaIh5xYmf3SyGZA=="
+  "resolved" "https://registry.npmjs.org/expo-image-picker/-/expo-image-picker-14.7.1.tgz"
+  "version" "14.7.1"
+  dependencies:
+    "expo-image-loader" "~4.6.0"
+
 "expo-keep-awake@~12.3.0":
   "integrity" "sha512-ujiJg1p9EdCOYS05jh5PtUrfiZnK0yyLy+UewzqrjUqIT8eAGMQbkfOn3C3fHE7AKd5AefSMzJnS3lYZcZYHDw=="
   "resolved" "https://registry.npmjs.org/expo-keep-awake/-/expo-keep-awake-12.3.0.tgz"

@@ -1,6 +1,6 @@
 // Run npm install @react-native-async-storage/async-storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { REACT_APP_CLIENT_ID, REACT_APP_CLIENT_SECRET } from '@env';
+import { CLIENT_ID, CLIENT_SECRET } from '@env';
 
 const USER_KEY = 'user';
 
@@ -48,7 +48,7 @@ export async function getAccessToken() {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `grant_type=client_credentials&client_id=${REACT_APP_CLIENT_ID}&client_secret=${REACT_APP_CLIENT_SECRET}`,
+        body: `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`,
     });
     
     const data = await response.json();

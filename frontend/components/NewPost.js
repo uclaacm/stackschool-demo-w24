@@ -14,7 +14,7 @@ export default function NewPost({ visible, onClose, onPost }) {
       const user = await getUser();
 
       if (user) {
-        setUserId(user.id);
+        setUserId(user);
       } else {
         console.error('Error fetching user data');
       }
@@ -115,10 +115,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    padding: 16,
+    padding: 20,
     backgroundColor: 'white',
     borderRadius: 10,
-    width: '80%',
+    width: '85%',
   },
   modalTitle: {
     fontFamily: 'Inter-SemiBold',

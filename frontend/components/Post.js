@@ -8,6 +8,7 @@ const URL = 'http://localhost:8000';
 export default function Post ({ user, post, accessToken }) {
   const [loading, setLoading] = useState(true);
   const [songUser, setSongUser] = useState();
+  const [image, setImage] = useState();
   const [likes, setLikes] = useState(post.likes);
   const [liked, setLiked] = useState();
   const timestamp = post.date;
@@ -66,8 +67,17 @@ export default function Post ({ user, post, accessToken }) {
   async function fetchSongUser() {
     try {
       const response = await fetch(`${URL}/songs/user/${post.id}`);
-      const data = await response.json();
-      setSongUser(data);
+      const user = await response.json();
+      setSongUser(user);
+      if (user.image === 'mofu1.jpeg') {
+        setImage(require('../assets/mofu1.jpeg'));
+      } else if (user.image === 'mofu2.jpeg') {
+        setImage(require('../assets/mofu2.jpeg'));
+      } else if (user.image === 'mofu3.jpeg') {
+        setImage(require('../assets/mofu3.jpeg'));
+      } else {
+        setImage(require('../assets/mofu4.jpeg'));
+      }
       setLoading(false);
     } catch (error) {
       console.error(`Error fetching song's user data:`, error.message);
@@ -82,10 +92,7 @@ export default function Post ({ user, post, accessToken }) {
   return (
     <View style={styles.container}>
         <View style={styles.header}>
-          <Image
-            style={styles.image}
-            // TO BE FIXED
-            source={require('../assets/profileShiyu.jpeg')}/>   
+          <Image style={styles.image} source={image} />   
           <View>
             <View style={styles.row}>
               <Text style={styles.whiteText}>{songUser.first} {songUser.last}</Text>
